@@ -141,7 +141,7 @@ CRITICAL INSTRUCTIONS:
 1. Grounding: Answer ONLY based on the provided news articles. If the articles do not contain enough facts to answer the question, state that clearly.
 2. Multilingual Output: You MUST write your final response ('answer' and 'audio_script') in {target_language_name} ({language_code}), matching the user's language.
 3. Provenance & Citations: Explicitly mention which Article indices (e.g., [Article 1], [Article 2]) support each statement.
-4. Audio Script: Provide a clean 'audio_script' in the target language suitable for Text-to-Speech (omit bracketed citations like [Article 1], markdown symbols, and URLs).
+4. Audio Script: Provide a clean 'audio_script' in the target language suitable for Text-to-Speech (omit markdown symbols) and mention the date of the cited article on which the news was released on.
 5. Output Format: You MUST return ONLY a valid JSON object with the following schema:
 {{
   "answered": true, // boolean: true if the question was answered, false if not enough info

@@ -2,6 +2,9 @@
 
 An AI-powered voice agent that lets users ask news questions **in any Indian language**, fetches real-time news from [NewsAPI.org](https://newsapi.org), synthesizes a grounded answer using the **Sarvam AI** model stack, plays the spoken response in the user's native language via Sarvam TTS, and records every step in an immutable **Data Provenance Ledger**.
 
+
+### Demo deployed at Vercel: https://sarvam-voice-news-explorer.vercel.app/
+
 ---
 
 ## 🌊 End-to-End Pipeline Flow
@@ -188,7 +191,7 @@ sarvam/
 
 Python 3.10+ is required. Using conda:
 ```bash
-conda activate py310
+conda activate <env name>
 ```
 Or create a virtual environment:
 ```bash
