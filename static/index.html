@@ -10,7 +10,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/style.css?v=2">
 </head>
 
 <body>
@@ -45,11 +45,23 @@
             <button class="toolbar-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle dark / light mode">
               <span id="darkModeIcon">🌙</span> <span id="darkModeLabel">Dark</span>
             </button>
-            <button class="toolbar-btn disabled-feature"
-              title="Multi-language UI coming soon — currently auto-detects your query language"
-              onclick="showLangComingSoon()">
-              🌐 Language
-            </button>
+            <div class="toolbar-lang-pill" title="Change webpage language">
+              <span class="lang-globe-icon">🌐</span>
+              <select id="siteLanguageSelect" class="toolbar-select" onchange="changeSiteLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="bn">বাংলা (Bengali)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+                <option value="mr">मराठी (Marathi)</option>
+                <option value="gu">ગુજરાતી (Gujarati)</option>
+                <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                <option value="ml">മലയാളം (Malayalam)</option>
+                <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                <option value="ur">اردو (Urdu)</option>
+              </select>
+            </div>
+            <div id="google_translate_element" style="display:none;"></div>
             <button class="toolbar-btn info-btn" onclick="showWelcomeModal()" title="Show introduction guide">
               ℹ️ Guide
             </button>
@@ -390,7 +402,7 @@
 
         <!-- What this is -->
         <div class="welcome-section">
-          <h3 class="welcome-section-title">🌐 What is this?</h3>
+          <h3 class="welcome-section-title">🌐 About this</h3>
           <p>This is a voice-first, multilingual news research agent. Ask a question about any current event — by
             speaking or typing — in <strong>any Indian language</strong>, and the system fetches real news articles,
             composes a <strong>grounded answer with citations</strong>, and speaks it back to you in your own language.
@@ -401,17 +413,17 @@
         <div class="welcome-section">
           <h3 class="welcome-section-title">⚙️ How it works (7 stages)</h3>
           <ol class="welcome-steps">
-            <li><strong>🎙️ Transcription</strong> — Your voice is converted to text (<em>Sarvam saaras:v3</em>)</li>
-            <li><strong>🌐 Translation</strong> — Non-English queries are translated to English, since NewsAPI only
+            <li>🎙️ Transcription — Your voice is converted to text (<em>Sarvam saaras:v3</em>)</li>
+            <li>🌐 Translation — Non-English queries are translated to English, since NewsAPI only
               supports English searches (<em>sarvam-translate:v1</em>)</li>
-            <li><strong>🧠 Intent Analysis</strong> — The LLM understands <em>what</em> you want and generates an
+            <li> 🧠 Intent Analysis — The LLM understands <em>what</em> you want and generates an
               optimised search query (<em>sarvam-105b-conversations</em>)</li>
-            <li><strong>📡 News Retrieval</strong> — Up to 8 live articles are fetched from <em>NewsAPI.org</em></li>
-            <li><strong>✍️ Grounded Answer</strong> — The LLM reads the articles and drafts a cited answer — it cannot
+            <li>📡 News Retrieval — Up to 8 live articles are fetched from <em>NewsAPI.org</em></li>
+            <li>✍️ Grounded Answer — The LLM reads the articles and drafts a cited answer — it cannot
               fabricate facts (<em>sarvam-105b-conversations</em>)</li>
-            <li><strong>🔁 Back-Translation</strong> — The English answer is translated back into your language
+            <li>🔁 Back-Translation — The English answer is translated back into your language
               (<em>sarvam-translate:v1</em>)</li>
-            <li><strong>🔊 Voice Synthesis</strong> — A language-matched news anchor voice reads the answer aloud
+            <li>🔊 Voice Synthesis — A language-matched news anchor voice reads the answer aloud
               (<em>bulbul:v3</em>)</li>
           </ol>
         </div>
@@ -473,6 +485,43 @@
   </div>
 
   <script src="/static/app.js"></script>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,hi,bn,ta,te,mr,gu,kn,ml,pa,ur',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+
+    function changeSiteLanguage(langCode) {
+      localStorage.setItem("sarvam_site_lang", langCode);
+
+      if (langCode === 'en') {
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+      } else {
+        document.cookie = "googtrans=/en/" + langCode + "; path=/;";
+        document.cookie = "googtrans=/en/" + langCode + "; domain=" + window.location.hostname + "; path=/;";
+      }
+
+      const combo = document.querySelector('.goog-te-combo');
+      if (combo) {
+        combo.value = langCode;
+        combo.dispatchEvent(new Event('change'));
+      } else {
+        window.location.reload();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const saved = localStorage.getItem("sarvam_site_lang") || "en";
+      const sel = document.getElementById("siteLanguageSelect");
+      if (sel) sel.value = saved;
+    });
+  </script>
+  <script type="text/javascript"
+    src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>

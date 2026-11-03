@@ -369,16 +369,6 @@ vercel
 
 ---
 
-## 🔒 Security & Git Hygiene
-
-- `.env` is **gitignored** — your API keys are never committed.
-- `data/ledger.json` and `data/ledgers/` are **gitignored** — session query history is not committed.
-- `data/audio/` is **gitignored** — generated audio files are not committed.
-- Use `.env.example` as a template; fill `.env` locally with real keys.
-- For production, set `SARVAM_API_KEY` and `NEWSAPI_KEY` as environment variables in your deployment platform (Vercel, Docker, etc.) — never hardcode them.
-
----
-
 ## 🏗️ Tech Stack
 
 | Layer | Technology |
