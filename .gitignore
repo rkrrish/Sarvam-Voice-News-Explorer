@@ -1,0 +1,17 @@
+.env
+.env.local
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+# Audio cache
+data/audio/*
+!data/audio/.gitkeep
+# Ledger session data (contains real query history)
+data/ledger.json
+data/ledgers/*
+!data/ledgers/.gitkeep
+.vercel
+node_modules/
+dist/

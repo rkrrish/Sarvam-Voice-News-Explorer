@@ -1,0 +1,15 @@
+.git
+.gitignore
+.dockerignore
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+data/audio/*
+!data/audio/.gitkeep
+.env.local
+.vercel
+node_modules
+dist
+README.md

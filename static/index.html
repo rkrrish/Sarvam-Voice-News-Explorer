@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Sarvam Daily Chronicle • Sarvam Voice News Explorer & Audit Ledger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+  <!-- Broadsheet Top Bar -->
+  <div class="broadsheet-topbar">
+    <div class="topbar-content">
+      <span>VOL. 105B • DAILY SPECIAL EDITION</span>
+      <span class="topbar-motto">“ALL THE NEWS THAT’S FIT TO SYNTHESIZE”</span>
+      <span>PRESS CLEARANCE: #AI-7749 • GLOBAL &amp; REGIONAL WIRE FEED</span>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Masthead Header -->
+    <header class="app-header">
+      <div class="masthead">
+        <div class="brand">
+          <div class="logo-icon">📰</div>
+          <div>
+            <div class="kicker-tag">AI NEWSROOM DESK</div>
+            <h1>The Sarvam Daily • Voice News Explorer</h1>
+            <p class="subtitle">Multilingual Voice Querying &amp; Real-Time Ground Reports • Live Media Coverage &amp;
+              Source Auditing</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div id="systemStatus" class="status-badge connected">
+            <span class="status-dot"></span> News Desk: Online
+          </div>
+          <!-- Utility toolbar buttons -->
+          <div class="toolbar-btns">
+            <button class="toolbar-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle dark / light mode">
+              <span id="darkModeIcon">🌙</span> <span id="darkModeLabel">Dark</span>
+            </button>
+            <button class="toolbar-btn disabled-feature"
+              title="Multi-language UI coming soon — currently auto-detects your query language"
+              onclick="showLangComingSoon()">
+              🌐 Language
+            </button>
+            <button class="toolbar-btn info-btn" onclick="showWelcomeModal()" title="Show introduction guide">
+              ℹ️ Guide
+            </button>
+          </div>
+          <nav class="nav-tabs">
+            <button id="tabExplorerBtn" class="tab-btn active" onclick="switchTab('explorer')">
+              <span class="tab-icon">🎙️</span> Ask the Newsroom
+            </button>
+            <button id="tabLedgerBtn" class="tab-btn" onclick="switchTab('ledger')">
+              <span class="tab-icon">📜</span> History &amp; Ledger <span id="ledgerCountBadge"
+                class="count-badge">0</span>
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Live Wire Ticker -->
+      <div class="live-ticker-bar">
+        <div class="ticker-badge"><span class="ticker-live-dot"></span> LIVE WIRE</div>
+        <div class="ticker-text">
+          Scanning global and Indian news sources in 10+ regional languages • Tap the mic or type to get a real-time
+          ground report!
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content: Explorer Tab -->
+    <main id="explorerTab" class="tab-content active">
+      <!-- Input Section -->
+      <section class="card input-card">
+        <div class="input-header">
+          <div>
+            <h2>🎙️ Ask by Voice or Text</h2>
+            <p class="section-note">Speak into your mic or type a question. We'll search the news wires and bring you
+              the ground report.</p>
+          </div>
+          <div class="language-picker">
+            <label for="languageSelect">Language / Dialect:</label>
+            <select id="languageSelect">
+              <option value="">Auto-Detect (Sarvam Saaras)</option>
+              <option value="en-IN">English (India)</option>
+              <option value="hi-IN">Hindi (हिंदी)</option>
+              <option value="bn-IN">Bengali (বাংলা)</option>
+              <option value="ta-IN">Tamil (தமிழ்)</option>
+              <option value="te-IN">Telugu (తెలుగు)</option>
+              <option value="kn-IN">Kannada (ಕನ್ನಡ)</option>
+              <option value="gu-IN">Gujarati (ગુજરાતી)</option>
+              <option value="mr-IN">Marathi (मराठी)</option>
+              <option value="pa-IN">Punjabi (ਪੰਜਾਬੀ)</option>
+              <option value="ml-IN">Malayalam (മലയാളം)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Voice Interaction Centerpiece (Studio Mic) -->
+        <div class="voice-centerpiece">
+          <div class="mic-on-air-tag" id="micOnAirTag">MIC READY</div>
+          <button id="recordBtn" class="record-btn" onclick="toggleRecording()" title="Click to speak your question">
+            <div class="mic-icon">🎙️</div>
+            <div class="pulse-ring"></div>
+          </button>
+          <div id="recordingStatus" class="recording-status">Tap microphone to speak your question</div>
+          <div id="recordingTimer" class="recording-timer" style="display:none;">00:00</div>
+          <canvas id="waveformCanvas" class="waveform-canvas" width="320" height="42" style="display:none;"></canvas>
+        </div>
+
+        <!-- Alternative Input (Type & Audio Upload) -->
+        <div class="secondary-inputs">
+          <div class="divider"><span>OR TYPE A QUESTION / UPLOAD AUDIO CLIP</span></div>
+          <div class="text-input-row">
+            <input type="text" id="textQueryInput"
+              placeholder="Ask anything (e.g., What happened between Hugging Face and OpenAI? Was Hugging Face hacked?)" />
+            <button id="submitTextBtn" class="btn primary-btn" onclick="submitTextQuery()">
+              Get Ground Report 🗞️
+            </button>
+          </div>
+          <div class="upload-row">
+            <label for="audioFileInput" class="upload-label">
+              📁 Upload Audio Clip (.wav, .mp3, .m4a, .webm)
+            </label>
+            <input type="file" id="audioFileInput" accept="audio/*" onchange="handleFileUpload(event)"
+              style="display:none;" />
+            <span id="uploadedFileName" class="uploaded-filename"></span>
+          </div>
+        </div>
+
+        <!-- Suggested Scenarios -->
+        <div class="suggestions-row">
+          <span class="suggestion-label">💡 Try asking:</span>
+          <button class="chip" onclick="useQuery('Are there any War related updates?')">
+            War Updates
+          </button>
+          <button class="chip" onclick="useQuery('क्या आर्टिफिशियल इंटेलिजेंस में कोई बड़ा नया अपडेट आया है?')">
+            हिंदी: AI Updates
+          </button>
+          <button class="chip" onclick="useQuery('What are the latest breakthroughs in Indian space exploration?')">
+            ISRO Space News
+          </button>
+        </div>
+      </section>
+
+      <!-- Processing Loading State (Newsroom in Action - 40% Newsroom Flavor) -->
+      <section id="processingCard" class="card processing-card" style="display:none;">
+        <div class="press-roll-indicator">
+          <div class="spinner"></div>
+          <span class="press-roll-badge">PRESS IN ACTION</span>
+        </div>
+        <h3 class="processing-headline">Newsroom In Action — Raiding the Wires for Your Answer!</h3>
+        <div class="stepper">
+          <div id="stepSTT" class="step-item active">🎙️ 1. Saaras STT (Audio)</div>
+          <div class="step-arrow">→</div>
+          <div id="stepLLMAnalysis" class="step-item">🧠 2. Editor Analysis</div>
+          <div class="step-arrow">→</div>
+          <div id="stepNews" class="step-item">📡 3. Raiding News Wires</div>
+          <div class="step-arrow">→</div>
+          <div id="stepLLMAnswer" class="step-item">✍️ 4. Drafting the Story</div>
+          <div class="step-arrow">→</div>
+          <div id="stepTranslateNative" class="step-item">🌐 5. Regional Translation</div>
+          <div class="step-arrow">→</div>
+          <div id="stepTTS" class="step-item">📢 6. News Anchor Voice</div>
+        </div>
+        <p id="processingDetail" class="processing-detail">Searching the news wires and putting together your answer...
+        </p>
+      </section>
+
+      <!-- Response Section (Casual & Clear Results) -->
+      <section id="responseSection" style="display:none;">
+        <!-- Question Summary Banner -->
+        <div class="query-summary-banner">
+          <div class="query-text-group">
+            <span class="banner-kicker">YOUR QUESTION:</span>
+            <span id="displayTranscript" class="transcript-text"></span>
+          </div>
+          <div class="badges-group">
+            <span id="langBadge" class="badge lang-badge">Language: en-IN</span>
+            <span id="confidenceBadge" class="badge conf-badge">Match: 98%</span>
+            <span id="durationBadge" class="badge time-badge">⚡ 1.2s</span>
+          </div>
+        </div>
+
+        <!-- Sarvam LLM Query Analysis Card -->
+        <div id="llmAnalysisBox" class="llm-analysis-box" style="display:none;">
+          <div class="llm-analysis-header">
+            <span class="llm-icon">🧠</span>
+            <strong>How the AI Searched the News</strong>
+            <span class="badge time-badge">sarvam-105b</span>
+          </div>
+          <div class="llm-analysis-details">
+            <div class="analysis-row">
+              <span class="analysis-label">What you asked about:</span>
+              <span id="llmUserIntent" class="analysis-value"></span>
+            </div>
+            <div class="analysis-row">
+              <span class="analysis-label">Search query used:</span>
+              <span id="llmSearchQuery" class="analysis-value highlight-query"></span>
+            </div>
+            <div class="analysis-row">
+              <span class="analysis-label">Key topics picked:</span>
+              <div id="llmKeywordsList" class="analysis-keywords-pills"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Translation Pipeline Info Box -->
+        <div id="translationInfoBox" class="translation-info-box" style="display:none;">
+          <div class="translation-info-header">
+            <span class="trans-icon">🌐</span>
+            <strong>Language Translation Details</strong>
+            <span id="translationModelBadge" class="badge time-badge">sarvam-translate:v1</span>
+          </div>
+          <div class="translation-info-details">
+            <div class="trans-row">
+              <span class="trans-label">Original question:</span>
+              <span id="transOriginalQuery" class="trans-value"></span>
+            </div>
+            <div class="trans-row">
+              <span class="trans-label">Answer translated to:</span>
+              <span id="transNativeLang" class="trans-value"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Answer & Audio Card -->
+        <div class="card answer-card">
+          <div class="answer-card-header">
+            <div class="answer-status-pill" id="answerStatusPill">
+              <span id="answerStatusIcon">✓</span>
+              <span id="answerStatusText">Answer Found in the News</span>
+            </div>
+            <div class="audio-controls-top">
+              <label class="toggle-label">
+                <input type="checkbox" id="autoplayToggle" checked> Autoplay news anchor voice
+              </label>
+            </div>
+          </div>
+
+          <div class="frontpage-lead-tag">THE GROUND REPORT:</div>
+
+          <!-- Synthesized Answer -->
+          <div class="answer-body">
+            <p id="answerText" class="answer-text"></p>
+          </div>
+
+          <!-- Audio Player (Broadcast Voice) -->
+          <div class="audio-player-wrapper">
+            <div class="audio-info">
+              <span class="audio-icon">🔊</span>
+              <div>
+                <strong>Listen to the News Anchor</strong>
+                <p id="speakerInfo" class="speaker-meta">Anchor: Aditi (Sarvam Bulbul) • Indian English</p>
+              </div>
+            </div>
+            <audio id="ttsAudioPlayer" controls class="tts-player"></audio>
+            <a id="downloadAudioBtn" class="btn icon-btn" download="sarvam_answer.wav" title="Download Audio">
+              ⬇ Download Audio
+            </a>
+          </div>
+
+          <!-- Grounding & Reasoning Toggle -->
+          <details class="reasoning-details">
+            <summary>🔍 See sources &amp; fact-check notes</summary>
+            <div class="reasoning-content">
+              <h4>How this answer was put together:</h4>
+              <p id="modelReasoningText"></p>
+              <h4>News sources used for this answer:</h4>
+              <ul id="citedSourcesList" class="cited-sources-list"></ul>
+            </div>
+          </details>
+        </div>
+
+        <!-- Retrieved News Articles Grid (Media Coverage) -->
+        <div class="news-section">
+          <div class="news-section-header">
+            <div>
+              <h3>🗞️ News Articles Found (<span id="articlesCount">0</span>)</h3>
+              <p class="section-note">Media coverage and public news stories retrieved for this query.</p>
+            </div>
+            <span id="searchQueryUsed" class="query-used-meta">Search query: "Hugging Face OpenAI"</span>
+          </div>
+          <div id="articlesGrid" class="articles-grid"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- History & Ledger Tab -->
+    <main id="ledgerTab" class="tab-content" style="display:none;">
+      <section class="card ledger-card">
+        <div class="ledger-header">
+          <div>
+            <h2>📜 Query History &amp; Audit Ledger</h2>
+            <p class="subtitle">A complete, immutable record of past questions, news articles found, citations, and
+              generated answers.</p>
+          </div>
+          <div class="ledger-actions">
+            <button class="btn secondary-btn" onclick="exportLedgerJSON()">Export History (JSON)</button>
+            <button class="btn secondary-btn" onclick="loadLedgerRecords()">Refresh</button>
+          </div>
+        </div>
+
+        <!-- Ledger Table / List -->
+        <div class="ledger-table-container">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Input Type</th>
+                <th>Question Asked</th>
+                <th>Language</th>
+                <th>Articles Found</th>
+                <th>Sources Used</th>
+                <th>Outcome</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <tr>
+                <td colspan="8" class="empty-state">No questions recorded yet. Ask a question above to start your
+                  history log.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal for Detailed Inspection -->
+    <div id="ledgerModal" class="modal-backdrop" style="display:none;" onclick="closeModal(event)">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <div class="modal-kicker">AUDIT RECORD</div>
+            <h3 id="modalTitle">Question Details &amp; History Log</h3>
+          </div>
+          <button class="close-btn" onclick="closeModal()" title="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="modalSummary" class="modal-summary"></div>
+          <h4>Full Technical Log (JSON):</h4>
+          <pre id="modalJson" class="json-code-block"></pre>
+        </div>
+        <div class="modal-footer">
+          <button class="btn secondary-btn" onclick="copyModalJson()">Copy JSON</button>
+          <button class="btn primary-btn" onclick="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Powered by <strong>Sarvam AI</strong> (Saaras STT • Sarvam-105B • Bulbul Voice) and
+        <strong>NewsAPI.org</strong>
+      </p>
+      <p class="footer-fineprint">All ground reports are summarized from real media coverage. Source citations are
+        always provided.</p>
+    </footer>
+  </div>
+
+  <!-- ====================================================
+       WELCOME / INTRO MODAL (shown once on first load)
+       ==================================================== -->
+  <div id="welcomeModal" class="welcome-backdrop" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <div class="welcome-box">
+
+      <!-- Close button -->
+      <button class="welcome-close-btn" onclick="closeWelcomeModal()" title="Close and go to the newsroom"
+        aria-label="Close introduction">
+        &times;
+      </button>
+
+      <!-- Masthead strip -->
+      <div class="welcome-masthead">
+        <div class="welcome-kicker">AI NEWSROOM — FIRST EDITION BRIEFING</div>
+        <h2 class="welcome-title" id="welcomeTitle">📰 Welcome to The Sarvam Daily Chronicle</h2>
+        <p class="welcome-tagline">Your AI-powered multilingual voice news explorer</p>
+      </div>
+
+      <div class="welcome-body">
+
+        <!-- What this is -->
+        <div class="welcome-section">
+          <h3 class="welcome-section-title">🌐 What is this?</h3>
+          <p>This is a voice-first, multilingual news research agent. Ask a question about any current event — by
+            speaking or typing — in <strong>any Indian language</strong>, and the system fetches real news articles,
+            composes a <strong>grounded answer with citations</strong>, and speaks it back to you in your own language.
+          </p>
+        </div>
+
+        <!-- How it works — pipeline steps -->
+        <div class="welcome-section">
+          <h3 class="welcome-section-title">⚙️ How it works (7 stages)</h3>
+          <ol class="welcome-steps">
+            <li><strong>🎙️ Transcription</strong> — Your voice is converted to text (<em>Sarvam saaras:v3</em>)</li>
+            <li><strong>🌐 Translation</strong> — Non-English queries are translated to English, since NewsAPI only
+              supports English searches (<em>sarvam-translate:v1</em>)</li>
+            <li><strong>🧠 Intent Analysis</strong> — The LLM understands <em>what</em> you want and generates an
+              optimised search query (<em>sarvam-105b-conversations</em>)</li>
+            <li><strong>📡 News Retrieval</strong> — Up to 8 live articles are fetched from <em>NewsAPI.org</em></li>
+            <li><strong>✍️ Grounded Answer</strong> — The LLM reads the articles and drafts a cited answer — it cannot
+              fabricate facts (<em>sarvam-105b-conversations</em>)</li>
+            <li><strong>🔁 Back-Translation</strong> — The English answer is translated back into your language
+              (<em>sarvam-translate:v1</em>)</li>
+            <li><strong>🔊 Voice Synthesis</strong> — A language-matched news anchor voice reads the answer aloud
+              (<em>bulbul:v3</em>)</li>
+          </ol>
+        </div>
+
+        <!-- Grounded sources callout -->
+        <div class="welcome-callout">
+          <div class="welcome-callout-icon">📌</div>
+          <div>
+            <strong>Every answer is grounded in real articles.</strong> You'll always see the exact news sources the AI
+            used. Look for the <em>"⭐ Used in Answer"</em> badge on article cards, and click <em>"Read full story
+              ↗"</em> on any card to open the original article and verify the facts yourself.
+          </div>
+        </div>
+
+        <!-- Buttons & controls guide -->
+        <div class="welcome-section">
+          <h3 class="welcome-section-title">🖱️ Quick button guide</h3>
+          <div class="welcome-btn-guide">
+            <div class="guide-row"><span class="guide-badge">🎙️ Mic</span><span>Tap once to start recording, tap again
+                to stop and search</span></div>
+            <div class="guide-row"><span class="guide-badge">🗞️ Get Ground Report</span><span>Submits a typed question
+                to the full pipeline</span></div>
+            <div class="guide-row"><span class="guide-badge">📁 Upload Audio</span><span>Upload a pre-recorded audio
+                file (.wav, .mp3, .m4a, .webm)</span></div>
+            <div class="guide-row"><span class="guide-badge">💡 Try asking chips</span><span>One-click sample queries to
+                test the system instantly</span></div>
+            <div class="guide-row"><span class="guide-badge">🔍 See sources</span><span>Expands a fact-check panel with
+                citations and LLM reasoning</span></div>
+            <div class="guide-row"><span class="guide-badge">📜 History & Ledger</span><span>Full audit trail of every
+                past query and its raw data</span></div>
+            <div class="guide-row"><span class="guide-badge">🌙 Dark</span><span>Toggles dark/light mode for the
+                UI</span></div>
+          </div>
+        </div>
+
+        <!-- Readme note -->
+        <p class="welcome-readme-note">
+          📄 For the complete pipeline documentation, model details, API reference, and deployment instructions, refer
+          to the <strong>README.md</strong> file included in the repository.
+        </p>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="welcome-footer">
+        <div class="welcome-footer-models">Powered by: saaras:v3 • sarvam-105b-conversations • bulbul:v3 •
+          sarvam-translate:v1 • NewsAPI.org</div>
+        <button class="btn primary-btn welcome-proceed-btn" onclick="closeWelcomeModal()">
+          Enter the Newsroom →
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Language coming-soon toast -->
+  <div id="langToast" class="lang-toast" style="display:none;">
+    🌐 Multi-language UI is coming soon! Your query language is already auto-detected by Sarvam Saaras.
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+
+</html>
